@@ -65,25 +65,22 @@ assert.deepStrictEqual(
 );
 
 //Exercice 3
-// La fonction doit renvoyer un nouvel objet, basé sur celui passé en paramètre mais qui ne contient pas les
-// clés/valeurs filtrées.
-// Le filtrage se fait via un prédicat (fonction qui renvoie true ou false) passé en paramètre. La clé et la
-// valeur sont fournies en tant que paramètres de ce prédicat.
+
 function filterObject(object, predicat) {
   let newObject = {};
   for (const key in object) {
-    console.log(predicat(key, object[key]));
+    // console.log(predicat(key, object[key]));
     if (object.hasOwnProperty(key)) {
       if (predicat(key, object[key])) {
         newObject[key] = object[key];
       }
     }
-    console.log(newObject);
+    // console.log(newObject);
   }
   return newObject;
 }
 
-console.log(
+assert.deepStrictEqual(
   filterObject(
     {
       foo: 1,
@@ -91,20 +88,35 @@ console.log(
       baz: true,
     },
     (key, value) => key === "foo" || value === "hello"
-  )
+  ),
+  {
+    foo: 1,
+    bar: "hello",
+  }
 );
 
-assert.deepStrictEqual(
-    filterObject(
-        {
-            foo: 1,
-            bar: 'hello',
-            baz: true
-        },
-        (key, value) => key === 'foo' || value === 'hello'
-    ),
-    {
-        foo: 1,
-        bar: 'hello'
-    }
-)
+//Exercice 4
+
+// ne pas toucher
+const asyncJob = (n) =>
+  Math.random() > 0.5 ? Promise.resolve(n + 1) : Promise.reject(Error("boom"));
+// a transformer
+asyncJob(0)
+  .then((i) => asyncJob(i))
+  .then((i) => Promise.all([asyncJob(i), asyncJob(i), asyncJob(i)]))
+  .then(([x, y, z]) => asyncJob(x + y + z))
+  .then((total) => console.log(total))
+  .catch((err) => console.error(`gestion erreur globale: ${err.message}`));
+
+  asyncJob(0)
+    .then(async (i) => {
+      i = await asyncJob(i);
+      const results = await Promise.all([
+        asyncJob(i),
+        asyncJob(i),
+        asyncJob(i),
+      ]);
+      const total = await asyncJob(results[0] + results[1] + results[2]);
+      console.log(total);
+    })
+    .catch((err) => console.error(`gestion erreur globale: ${err.message}`));
