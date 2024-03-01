@@ -1,4 +1,5 @@
 import assert from "assert";
+import { log } from "console";
 
 //Exercice 1
 
@@ -64,5 +65,46 @@ assert.deepStrictEqual(
 );
 
 //Exercice 3
+// La fonction doit renvoyer un nouvel objet, basé sur celui passé en paramètre mais qui ne contient pas les
+// clés/valeurs filtrées.
+// Le filtrage se fait via un prédicat (fonction qui renvoie true ou false) passé en paramètre. La clé et la
+// valeur sont fournies en tant que paramètres de ce prédicat.
+function filterObject(object, predicat) {
+  let newObject = {};
+  for (const key in object) {
+    console.log(predicat(key, object[key]));
+    if (object.hasOwnProperty(key)) {
+      if (predicat(key, object[key])) {
+        newObject[key] = object[key];
+      }
+    }
+    console.log(newObject);
+  }
+  return newObject;
+}
 
+console.log(
+  filterObject(
+    {
+      foo: 1,
+      bar: "hello",
+      baz: true,
+    },
+    (key, value) => key === "foo" || value === "hello"
+  )
+);
 
+assert.deepStrictEqual(
+    filterObject(
+        {
+            foo: 1,
+            bar: 'hello',
+            baz: true
+        },
+        (key, value) => key === 'foo' || value === 'hello'
+    ),
+    {
+        foo: 1,
+        bar: 'hello'
+    }
+)
